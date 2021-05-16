@@ -34,25 +34,25 @@ export class AppComponent {
     csvReader.onload = evt => {
       console.log('File read complete');
       console.log(evt);
-      this.csvData = evt.currentTarget.result;
+      this.csvData = evt.currentTarget['result'];
       this.parsedCsv = this.formatConvertService.parseCsv(this.csvData);
-      this.parsedCsv.contentRows = this.formatConvertService.normalizeCsvHeaders(
+      this.parsedCsv = this.formatConvertService.normalizeCsvHeaders(
         this.parsedCsv.contentRows,
         this.hasHeader
       );
       this.jsonStringData = this.formatConvertService.csvToJson(
-        this.parsedCsv.contentRows
+        this.parsedCsv
       );
     };
     csvReader.readAsText(this.csvFile);
   }
 
-  columnNameChange(columnName: ColumnNameDTO) {
-    const headerRow = this.parsedCsv.contentRows[0];
-    headerRow[columnName.index] = columnName.name;
+  columnNameChange(columnName: ColumnNameDTO) {    
+    console.log('Column name changed: ', columnName);
+    this.parsedCsv.headerRow[columnName.index] = columnName.name;
     this.jsonStringData = this.formatConvertService.csvToJson(
-      this.parsedCsv.contentRows
+      this.parsedCsv
     );
-    console.log(headerRow);
+    console.log(this.parsedCsv);
   }
 }

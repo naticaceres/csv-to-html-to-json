@@ -6,7 +6,7 @@ export class FormatConvertService {
   constructor() {}
 
   parseCsv(csvData: string): ParsedCsv {
-    let parsedCsv: ParsedCsv = { name: '', contentRows: [] };
+    let parsedCsv: ParsedCsv = { name: '', headerRow: [], contentRows: []  };
 
     const csvByLine: string[] = csvData.split('\n');
 
@@ -18,22 +18,24 @@ export class FormatConvertService {
   normalizeCsvHeaders(
     parsedCsvRows: string[][],
     isFirstRowHeaders = false
-  ): string[][] {
-    const longestRowLength = this.getLongestRowLength(parsedCsvRows);
-    let headersRow = [];
-
-    if (isFirstRowHeaders) {
-      headersRow = parsedCsvRows.pop();
+  ): ParsedCsv {
+    let parsedCsv: ParsedCsv = { name: '', headerRow: [], contentRows: []  };
+    const longestRowLength = this.getLongestRowLength(parsedCsvRows);    
+    if (isFirstRowHeaders && parsedCsvRows.length > 0) {
+      parsedCsv.headerRow = parsedCsvRows[0];      
+      parsedCsvRows = parsedCsvRows.slice(1, parsedCsvRows.length);
     }
 
-    if (longestRowLength > headersRow.length) {
-      headersRow = headersRow.concat(
-        new Array(longestRowLength - headersRow.length).fill('')
-      );
+    if (longestRowLength > parsedCsv.headerRow.length) {
+      parsedCsv.headerRow = parsedCsv.headerRow.concat(
+        new Array(longestRowLength - parsedCsv.headerRow.length).fill('noName')
+      );      
     }
+    console.log('Header Row', parsedCsv.headerRow);
 
-    parsedCsvRows.unshift(headersRow);
-    return parsedCsvRows;
+    parsedCsv.contentRows = parsedCsvRows;
+
+    return parsedCsv;
   }
 
   getLongestRowLength(row: string[][]): number {
@@ -44,17 +46,15 @@ export class FormatConvertService {
     );
   }
 
-  csvToJson(contentRows: string[][]): string {
-    const headersRow = contentRows[0];
+  csvToJson(parsedCsv: ParsedCsv): string {
 
-    const jsonData = contentRows
-      .slice(1)
+    const jsonData = parsedCsv.contentRows      
       .reduce(
         (jsonArrayAccumulator, currentRow) => {
           const jsonRow = currentRow.reduce(
             (rowAccumulator, currentCellValue, currentCellIndex) => {
-              const propertyName = !!headersRow[currentCellIndex].length
-                ? headersRow[currentCellIndex]
+              const propertyName = !!parsedCsv.headerRow[currentCellIndex].length
+                ? parsedCsv.headerRow[currentCellIndex]
                 : `${currentCellIndex}-column-no-name`;
               rowAccumulator[propertyName] = currentCellValue;
               return rowAccumulator;
@@ -65,8 +65,7 @@ export class FormatConvertService {
           return jsonArrayAccumulator;
         },
         [{}]
-      )
-      .slice(1);
+      ).slice(1);
 
     return JSON.stringify(jsonData);
   }
