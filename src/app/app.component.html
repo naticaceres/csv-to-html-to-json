@@ -1,0 +1,51 @@
+<!-- Todo: Clean up text alignment with switch 
+           Fix vertical spacing between items
+           Add instructions
+-->
+<div>
+  <h2>Upload CSV and convert to JSON Example</h2>
+  <p>
+    This example is meant to allow a user to upload a CSV file, display it in a
+    table, rename headers and create a json object that could be sent to a
+    backend.
+  </p>
+  <p>
+    What this example does not include is proper checking of csv file, dealing
+    with commas inside of strings, or other more complex situations with a csv
+    import. It assumes the first row of data will contain an element for every
+    column, if it does not, there will be some unexpected behavior
+  </p>
+</div>
+<div>
+  <label>Choose a CSV file from your computer</label>
+</div>
+<div>
+  <input #csvUpload type="file" />
+</div>
+<div>
+  <label class="switch">
+    <input type="checkbox" [(ngModel)]="hasHeader" id="headerCheck" />
+    <span class="slider round"></span>
+  </label>
+  <label for="headerCheck">Is first line header?</label>
+</div>
+<button (click)="uploadCSV()">Upload CSV</button>
+
+
+<label class="switch">
+    <input type="checkbox" [(ngModel)]="showJson" id="jsonCheck" />
+    <span class="slider round"></span>
+  </label>
+<label for="jsonCheck">Show/Hide Json</label>
+
+<div>
+  <h2>{{fileName}}</h2>
+  <!-- Only showing header data for now to test data binding, remove once it works -->
+  <p>{{headerData}}</p>
+</div>
+<div *ngIf="showJson">
+  <p>{{jsonStringData}}</p>
+</div>
+
+<app-simple-table *ngIf="!!parsedCsv?.contentRows?.length" [rows]="parsedCsv.contentRows.slice(1)"
+  [columnNames]="parsedCsv.contentRows[0]" (columnNameChange)="columnNameChange($event)" ></app-simple-table>
