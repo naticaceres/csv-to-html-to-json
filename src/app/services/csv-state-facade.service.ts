@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, noop, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { ParsedCsv } from '../model/parsed-csv.model';
-import { ColumnNameDTO } from '../simple-table/column-name-dto.model';
+import { ColumnNameDTO } from '../model/column-name-dto.model';
 import { FormatConvertService } from './format-convert.service';
 import { UploadCsvService } from './upload-csv.service';
 

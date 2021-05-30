@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ColumnNameDTO } from './column-name-dto.model';
+import { ColumnNameDTO } from '../model/column-name-dto.model';
 
 @Component({
   selector: 'app-simple-table',

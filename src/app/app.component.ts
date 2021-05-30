@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ParsedCsv } from './model/parsed-csv.model';
 import { CsvStateFacadeService } from './services/csv-state-facade.service';
-import { ColumnNameDTO } from './simple-table/column-name-dto.model';
+import { ColumnNameDTO } from './model/column-name-dto.model';
 
 @Component({
   selector: 'my-app',
@@ -20,11 +20,7 @@ export class AppComponent implements OnInit {
   public parsedCsv$: Observable<ParsedCsv>;
   
   constructor(private csvState: CsvStateFacadeService) {
-    // uncomment to test without uploading a csv file
-    // this.parsedCsv = JSON.parse(
-    //   `{"name":"","headerRow":["noName1","noName2","noName3"],
-    //   "contentRows":[["1"," first"," record"],["2"," second","record"]]}`
-    // );
+    
   }
 
   ngOnInit() {
@@ -37,8 +33,7 @@ export class AppComponent implements OnInit {
     this.csvState.uploadCsv(file, this.hasHeader);
   }
 
-  columnNameChange(columnName: ColumnNameDTO) {
-    console.log('Column name changed: ', columnName);
+  columnNameChange(columnName: ColumnNameDTO) {    
     this.csvState.changeColumnName(columnName);
   }
 }
