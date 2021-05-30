@@ -12,8 +12,10 @@ export class FormatConvertService {
       contentRows: [],
     };
 
+    // Convert data into string area looking for new lines
     const csvByLine: string[] = csvData.split('\n');
 
+    // Loop through all the lines and split by comma.  One enhancement could be to have the user choose the delimiter
     parsedCsv.contentRows = csvByLine.map((row) => row.split(','));
 
     return parsedCsv;
@@ -29,11 +31,15 @@ export class FormatConvertService {
       contentRows: [],
     };
     const longestRowLength = this.getLongestRowLength(parsedCsvRows);
+    // Check if user said the first row was header data, and that the CSV has data
     if (isFirstRowHeaders && parsedCsvRows.length > 0) {
+      // First row becomes the header data
       parsedCsv.headerRow = parsedCsvRows[0];
+      // Slice the rest of the data and put into the row data
       parsedCsvRows = parsedCsvRows.slice(1, parsedCsvRows.length);
     }
 
+    // Need to account for the chance that some rows didn't have headers, so fill them with something
     if (longestRowLength > parsedCsv.headerRow.length) {
       parsedCsv.headerRow = parsedCsv.headerRow.concat(
         new Array(longestRowLength - parsedCsv.headerRow.length)
@@ -44,8 +50,7 @@ export class FormatConvertService {
               : header
           )
       );
-    }
-    console.log('Header Row', parsedCsv.headerRow);
+    }    
 
     parsedCsv.contentRows = parsedCsvRows;
 
