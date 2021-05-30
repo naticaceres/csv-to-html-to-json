@@ -5,15 +5,16 @@
 <div>
   <h2>Upload CSV and convert to JSON Example</h2>
   <p>
-    This example is meant to allow a user to upload a CSV file, display it in a
-    table, rename headers and create a json object that could be sent to a
-    backend.
+    This example is meant to allow a user to upload a CSV file, display it
+    in a table, rename headers and create a json object that could be sent
+    to a backend.
   </p>
   <p>
-    What this example does not include is proper checking of csv file, dealing
-    with commas inside of strings, or other more complex situations with a csv
-    import. It assumes the first row of data will contain an element for every
-    column, if it does not, there will be some unexpected behavior
+    What this example does not include is proper checking of csv file,
+    dealing with commas inside of strings, or other more complex situations
+    with a csv import. It assumes the first row of data will contain an
+    element for every column, if it does not, there will be some unexpected
+    behavior
   </p>
 </div>
 <div>
@@ -29,23 +30,27 @@
   </label>
   <label for="headerCheck">Is first line header?</label>
 </div>
-<button (click)="uploadCSV()">Upload CSV</button>
-
+<button (click)="uploadCsv()">Upload CSV</button>
 
 <label class="switch">
-    <input type="checkbox" [(ngModel)]="showJson" id="jsonCheck" />
-    <span class="slider round"></span>
-  </label>
+  <input type="checkbox" [(ngModel)]="showJson" id="jsonCheck" />
+  <span class="slider round"></span>
+</label>
 <label for="jsonCheck">Show/Hide Json</label>
 
-<div>
-  <h2>{{fileName}}</h2>
-  <!-- Only showing header data for now to test data binding, remove once it works -->
-  <p>{{headerData}}</p>
-</div>
-<div *ngIf="showJson">
-  <p>{{jsonStringData}}</p>
-</div>
+<ng-container *ngIf="parsedCsv$ | async as parsedCsv">
 
-<app-simple-table *ngIf="!!parsedCsv?.contentRows?.length" [parsedData]="parsedCsv" [rows]="parsedCsv.contentRows"
-  [columnNames]="parsedCsv.headerRow" (columnNameChange)="columnNameChange($event)" ></app-simple-table>
+  <div>
+    <h2>{{ parsedCsv.name }}</h2>
+  </div>
+  <div *ngIf="showJson">
+    <p>{{ jsonStringData$ | async }}</p>
+  </div>
+
+  <app-simple-table
+    *ngIf="!!parsedCsv?.contentRows?.length"
+    [rows]="parsedCsv.contentRows"
+    [columnNames]="parsedCsv.headerRow"
+    (columnNameChange)="columnNameChange($event)"
+  ></app-simple-table>
+</ng-container>

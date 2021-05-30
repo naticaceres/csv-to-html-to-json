@@ -1,10 +1,20 @@
 <table border="2" width="100%" cellpadding="4" cellspacing="0">
   <tr>
-    <th *ngFor="let columnName of parsedData.headerRow; index as columnIndex; trackBy:trackByIndex;">
-      <input type="text" [(ngModel)]="parsedData.headerRow[columnIndex]" (change)="columnNameChanged(columnIndex, $event.target.value)"/>
+    <th
+      *ngFor="
+        let columnName of columnNames;
+        index as columnIndex;
+        trackBy: trackByIndex
+      "
+    >
+      <input
+        type="text"
+        [value]="columnName"
+        (change)="columnNameChanged(columnIndex, $event.target.value)"
+      />
     </th>
   </tr>
-  <tr align="center" *ngFor="let row of parsedData.contentRows">
-    <td *ngFor="let cell of row">{{cell}}</td>
+  <tr align="center" *ngFor="let row of rows">
+    <td *ngFor="let cell of row">{{ cell }}</td>
   </tr>
 </table>

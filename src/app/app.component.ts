@@ -1,59 +1,44 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ParsedCsv } from './model/parsed-csv.model';
-import { FormatConvertService } from './services/format-convert.service';
+import { CsvStateFacadeService } from './services/csv-state-facade.service';
 import { ColumnNameDTO } from './simple-table/column-name-dto.model';
 
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   @ViewChild('csvUpload') fileData;
-  public csvFile: File;
   name = 'Angular';
-  public fileName: string;
-  public csvData: string;
+
   public hasHeader = false;
-  public headerData: string[];
-  public rowData: string[][] = null;
-  public jsonStringData: string;
-  public jsonData: object[];
   public showJson = false;
+
+  public jsonStringData$: Observable<string>;
+  public parsedCsv$: Observable<ParsedCsv>;
   
-
-  public parsedCsv: ParsedCsv;
-
-  constructor(private formatConvertService: FormatConvertService) {}
-
-  uploadCSV() {
-    this.csvFile = this.fileData.nativeElement.files[0];
-    console.log(this.csvFile);
-    this.fileName = this.csvFile.name;
-    var csvReader = new FileReader();
-
-    csvReader.onload = evt => {
-      console.log('File read complete');
-      console.log(evt);
-      this.csvData = evt.currentTarget['result'];
-      this.parsedCsv = this.formatConvertService.parseCsv(this.csvData);
-      this.parsedCsv = this.formatConvertService.normalizeCsvHeaders(
-        this.parsedCsv.contentRows,
-        this.hasHeader
-      );
-      this.jsonStringData = this.formatConvertService.csvToJson(
-        this.parsedCsv
-      );
-    };
-    csvReader.readAsText(this.csvFile);
+  constructor(private csvState: CsvStateFacadeService) {
+    // uncomment to test without uploading a csv file
+    // this.parsedCsv = JSON.parse(
+    //   `{"name":"","headerRow":["noName1","noName2","noName3"],
+    //   "contentRows":[["1"," first"," record"],["2"," second","record"]]}`
+    // );
   }
 
-  columnNameChange(columnName: ColumnNameDTO) {    
+  ngOnInit() {
+    this.parsedCsv$ = this.csvState.parsedCsv$;
+    this.jsonStringData$ = this.csvState.jsonCsvString$;
+  }
+
+  uploadCsv() {
+    const file = this.fileData.nativeElement.files[0];
+    this.csvState.uploadCsv(file, this.hasHeader);
+  }
+
+  columnNameChange(columnName: ColumnNameDTO) {
     console.log('Column name changed: ', columnName);
-    this.parsedCsv.headerRow[columnName.index] = columnName.name;
-    this.jsonStringData = this.formatConvertService.csvToJson(
-      this.parsedCsv
-    );
-    console.log(this.parsedCsv);
+    this.csvState.changeColumnName(columnName);
   }
 }
