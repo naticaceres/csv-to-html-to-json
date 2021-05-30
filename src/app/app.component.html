@@ -47,5 +47,5 @@
   <p>{{jsonStringData}}</p>
 </div>
 
-<app-simple-table *ngIf="!!parsedCsv?.contentRows?.length" [rows]="parsedCsv.contentRows"
+<app-simple-table *ngIf="!!parsedCsv?.contentRows?.length" [parsedData]="parsedCsv" [rows]="parsedCsv.contentRows"
   [columnNames]="parsedCsv.headerRow" (columnNameChange)="columnNameChange($event)" ></app-simple-table>

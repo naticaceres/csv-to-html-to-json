@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ParsedCsv } from './model/parsed-csv.model';
 import { FormatConvertService } from './services/format-convert.service';
 import { ColumnNameDTO } from './simple-table/column-name-dto.model';
@@ -20,6 +20,7 @@ export class AppComponent {
   public jsonStringData: string;
   public jsonData: object[];
   public showJson = false;
+  
 
   public parsedCsv: ParsedCsv;
 
